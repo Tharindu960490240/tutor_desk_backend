@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { q, tx } from "./db.js";
 import { loadAll, mapAtt, DEFAULT_SETTINGS } from "./data.js";
-import { buildSample } from "./sample.js";
 
 const r = Router();
 const isDate = s => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -117,11 +116,6 @@ r.post("/import", async (req, res) => {
   if (s.tpl && typeof s.tpl === "object") patch.tpl = s.tpl;
   patch.sample = false;
   await tx(c => importInto(c, req.userId, b, patch));
-  res.json(await loadAll(req.userId));
-});
-
-r.post("/sample", async (req, res) => {
-  await tx(c => importInto(c, req.userId, buildSample(typeof req.body?.today === "string" && isDate(req.body.today) ? req.body.today : undefined), { sample: true }));
   res.json(await loadAll(req.userId));
 });
 
